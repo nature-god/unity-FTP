@@ -1,0 +1,103 @@
+<FileZillaServer>
+    <Settings>
+        <Item name="Serverports" type="string">14149</Item>
+        <Item name="Number of Threads" type="numeric">2</Item>
+        <Item name="Maximum user count" type="numeric">0</Item>
+        <Item name="Timeout" type="numeric">120</Item>
+        <Item name="No Transfer Timeout" type="numeric">600</Item>
+        <Item name="Check data connection IP" type="numeric">2</Item>
+        <Item name="Service name" type="string" />
+        <Item name="Service display name" type="string" />
+        <Item name="Force TLS session resumption" type="numeric">1</Item>
+        <Item name="Login Timeout" type="numeric">60</Item>
+        <Item name="Show Pass in Log" type="numeric">0</Item>
+        <Item name="Custom PASV IP type" type="numeric">1</Item>
+        <Item name="Custom PASV IP" type="string">192.168.1.111</Item>
+        <Item name="Custom PASV min port" type="numeric">14140</Item>
+        <Item name="Custom PASV max port" type="numeric">14146</Item>
+        <Item name="Initial Welcome Message" type="string">%v&#x0D;&#x0A;written by Tim Kosse (tim.kosse@filezilla-project.org)&#x0D;&#x0A;Please visit https://filezilla-project.org/</Item>
+        <Item name="Admin port" type="numeric">14147</Item>
+        <Item name="Admin Password" type="string" />
+        <Item name="Admin IP Bindings" type="string" />
+        <Item name="Admin IP Addresses" type="string" />
+        <Item name="Enable logging" type="numeric">0</Item>
+        <Item name="Logsize limit" type="numeric">0</Item>
+        <Item name="Logfile type" type="numeric">0</Item>
+        <Item name="Logfile delete time" type="numeric">0</Item>
+        <Item name="Disable IPv6" type="numeric">0</Item>
+        <Item name="Enable HASH" type="numeric">0</Item>
+        <Item name="Download Speedlimit Type" type="numeric">0</Item>
+        <Item name="Upload Speedlimit Type" type="numeric">0</Item>
+        <Item name="Download Speedlimit" type="numeric">10</Item>
+        <Item name="Upload Speedlimit" type="numeric">10</Item>
+        <Item name="Buffer Size" type="numeric">32768</Item>
+        <Item name="Custom PASV IP server" type="string">http://ip.filezilla-project.org/ip.php</Item>
+        <Item name="Use custom PASV ports" type="numeric">1</Item>
+        <Item name="Mode Z Use" type="numeric">0</Item>
+        <Item name="Mode Z min level" type="numeric">1</Item>
+        <Item name="Mode Z max level" type="numeric">9</Item>
+        <Item name="Mode Z allow local" type="numeric">0</Item>
+        <Item name="Mode Z disallowed IPs" type="string" />
+        <Item name="IP Bindings" type="string">*</Item>
+        <Item name="IP Filter Allowed" type="string" />
+        <Item name="IP Filter Disallowed" type="string" />
+        <Item name="Hide Welcome Message" type="numeric">0</Item>
+        <Item name="Enable SSL" type="numeric">1</Item>
+        <Item name="Allow explicit SSL" type="numeric">1</Item>
+        <Item name="SSL Key file" type="string">C:\FTP_Server\certificate.crt</Item>
+        <Item name="SSL Certificate file" type="string">C:\FTP_Server\certificate.crt</Item>
+        <Item name="Implicit SSL ports" type="string">14149</Item>
+        <Item name="Force explicit SSL" type="numeric">0</Item>
+        <Item name="Network Buffer Size" type="numeric">262144</Item>
+        <Item name="Force PROT P" type="numeric">1</Item>
+        <Item name="SSL Key Password" type="string">Ttrby666</Item>
+        <Item name="Allow shared write" type="numeric">0</Item>
+        <Item name="No External IP On Local" type="numeric">1</Item>
+        <Item name="Active ignore local" type="numeric">1</Item>
+        <Item name="Autoban enable" type="numeric">0</Item>
+        <Item name="Autoban attempts" type="numeric">10</Item>
+        <Item name="Autoban type" type="numeric">0</Item>
+        <Item name="Autoban time" type="numeric">1</Item>
+        <Item name="Minimum TLS version" type="numeric">0</Item>
+        <SpeedLimits>
+            <Download />
+            <Upload />
+        </SpeedLimits>
+    </Settings>
+    <Groups />
+    <Users>
+        <User Name="nature">
+            <Option Name="Pass">8219EBB9CD55B6021B16BCD53E871C529160E901D49CBE1C3D04157EF910B4F4B01F6D421E81D645F31DD9D9F4D942BA565B7C0131E82CA1960BAB7D6BCD68A7</Option>
+            <Option Name="Salt">C|a,iz]8x5.I:j)6U5~E2(@}lLNOWynBaEW2Wz5UdE\Bk_GKc:6~YG|-{-&quot;3fKT&amp;</Option>
+            <Option Name="Group"></Option>
+            <Option Name="Bypass server userlimit">0</Option>
+            <Option Name="User Limit">0</Option>
+            <Option Name="IP Limit">0</Option>
+            <Option Name="Enabled">1</Option>
+            <Option Name="Comments"></Option>
+            <Option Name="ForceSsl">0</Option>
+            <IpFilter>
+                <Disallowed />
+                <Allowed />
+            </IpFilter>
+            <Permissions>
+                <Permission Dir="C:\FTP_Server\TestFileSpace">
+                    <Option Name="FileRead">1</Option>
+                    <Option Name="FileWrite">1</Option>
+                    <Option Name="FileDelete">1</Option>
+                    <Option Name="FileAppend">1</Option>
+                    <Option Name="DirCreate">1</Option>
+                    <Option Name="DirDelete">1</Option>
+                    <Option Name="DirList">1</Option>
+                    <Option Name="DirSubdirs">1</Option>
+                    <Option Name="IsHome">1</Option>
+                    <Option Name="AutoCreate">0</Option>
+                </Permission>
+            </Permissions>
+            <SpeedLimits DlType="0" DlLimit="10" ServerDlLimitBypass="0" UlType="0" UlLimit="10" ServerUlLimitBypass="0">
+                <Download />
+                <Upload />
+            </SpeedLimits>
+        </User>
+    </Users>
+</FileZillaServer>
