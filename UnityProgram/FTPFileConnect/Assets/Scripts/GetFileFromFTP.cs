@@ -403,14 +403,14 @@ public class GetFileFromFTP : MonoBehaviour
 
     public void OnclickUploadButton()
     {
-        UploadFile("test.avi");
+        UploadFile("Test.txt");
     }
 
     private void UploadFile(string newFileName)
     {
         try
         {
-            string url = "ftp://127.0.0.1:14149/"+ newFileName;
+            string url = GetUrlString(newFileName);
             string filepath = Application.dataPath + "/StreamingAssets/" + newFileName;
 
             FtpWebRequest request = CreatFtpWebRequest(url, WebRequestMethods.Ftp.UploadFile);
@@ -428,23 +428,20 @@ public class GetFileFromFTP : MonoBehaviour
                 responseStream.Write(buffer, 0, bytesRead);
             }
 
-            Debug.Log("Upload success!");
             responseStream.Close();
+            if (ShowFtpFileAndDirectory() == true)
+            {
+                Debug.Log("Upload success!");
+            }
+            else
+            {
+                Debug.Log("Upload failed!");
+            }
         }
         catch(Exception e)
         {
             Debug.LogError(e.Message);
         }
-    }
-
-    private void OnFileUploadProgressChanged(System.Object sender, UploadProgressChangedEventArgs e)
-    {
-        Debug.Log("Uploading Progress: " + e.ProgressPercentage);
-    }
-
-    private void OnFileUploadCompleted(System.Object sender, UploadFileCompletedEventArgs e)
-    {
-        Debug.Log("File Uploaded Success!");
     }
 
     private IEnumerator UpdateUISlider(float value)

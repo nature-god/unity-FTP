@@ -11,6 +11,7 @@ namespace UxlabFTPServer
 {
     public class UxlabFTP : MonoBehaviour
     {
+        //单例模式
         private static UxlabFTP instance;
         public static UxlabFTP Instance
         {
@@ -23,6 +24,7 @@ namespace UxlabFTPServer
                     {
                         GameObject go = new GameObject();
                         instance = go.AddComponent<UxlabFTP>();
+                        instance.networkCredential = new NetworkCredential("nature", "Ttrby666");
                     }            
                 }
                 return instance;
@@ -49,6 +51,23 @@ namespace UxlabFTPServer
 
             networkCredential = new NetworkCredential(userName, password);
             
+            if (ShowFtpFileAndDirectory() == true)
+            {
+                Debug.Log("Connect Success!");
+            }
+            else
+            {
+                Debug.Log("Connect Failed!");
+            }
+        }
+
+        /// <summary>
+        /// 进入下一文件夹层级
+        /// </summary>
+        /// <param name="directotyName">要进入的指定文件夹名(当前路径下)</param>
+        public void GotoDirectory(string directotyName)
+        {
+            currentDir += (directotyName + "/");
             if (ShowFtpFileAndDirectory() == true)
             {
                 Debug.Log("Connect Success!");
@@ -103,13 +122,13 @@ namespace UxlabFTPServer
         /// <summary>
         /// 下载指定文件到指定路径下
         /// </summary>
-        /// <param name="filename">待下载的文件名，相对路径</param>
+        /// <param name="filename">待下载的文件名，绝对路径</param>
         /// <param name="saveFileName">文件要存储的位置，绝对路径</param>
         /// <returns></returns>
         public IEnumerator DownloadFile(string filename, string saveFileName)
         {
             string savedFilePath = saveFileName;
-            string url = GetUrlString(filename);
+            string url = filename;
             try
             {
                 FtpWebRequest resFile = CreatFtpWebRequest(url, WebRequestMethods.Ftp.GetFileSize);
@@ -118,7 +137,57 @@ namespace UxlabFTPServer
                 //resFile.Credentials = new NetworkCredential("nature", "Ttrby666");
                 using (FtpWebResponse res = (FtpWebResponse)resFile.GetResponse())
                 {
-                    Debug.Log("All Length: " + res.ContentLength);
+                    //Debug.Log("All Length: " + res.ContentLength);
+                    if (res == null)
+                    {
+                        yield break;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.Log("<Error Message>Download filed: " + e.Message);
+            }
+
+            FtpWebRequest request = CreatFtpWebRequest(url, WebRequestMethods.Ftp.DownloadFile);
+            FtpWebResponse response = GetFtpResponse(request);
+            Stream responseStream = response.GetResponseStream();
+            FileStream fileStream = File.Create(savedFilePath);
+            int buflength = 8196;
+            byte[] buffer = new byte[buflength];
+            int bytesRead = 1;
+
+            while (bytesRead != 0)
+            {
+                bytesRead = responseStream.Read(buffer, 0, buflength);
+                fileStream.Write(buffer, 0, bytesRead);
+                //Debug.Log("BytesRead:" + bytesRead + "AlreadyRead:" + downloadFileAlreadyLength);
+                yield return new WaitForEndOfFrame();
+            }
+
+            Debug.Log("<Console>Download " + filename + " to " + saveFileName + " success!");
+            fileStream.Close();
+        }
+
+        /// <summary>
+        /// 下载指定文件到StreamingAssets/SaveFiles路径下
+        /// </summary>
+        /// <param name="filename">当前路径下的文件名</param>
+        /// <returns></returns>
+        public IEnumerator DownloadFile(string filename)
+        {
+            string savedFilePath = Application.dataPath + "/StreamingAssets/SaveFiles/" + filename;
+            string url = GetUrlString(filename);
+
+            try
+            {
+                FtpWebRequest resFile = CreatFtpWebRequest(url, WebRequestMethods.Ftp.GetFileSize);
+                //resFile.UseBinary = true;
+                //resFile.UsePassive = true;
+                //resFile.Credentials = new NetworkCredential("nature", "Ttrby666");
+                using (FtpWebResponse res = (FtpWebResponse)resFile.GetResponse())
+                {
+                    //Debug.Log("All Length: " + res.ContentLength);
                     if (res == null)
                     {
                         yield break;
@@ -146,8 +215,76 @@ namespace UxlabFTPServer
                 yield return new WaitForEndOfFrame();
             }
 
-            Debug.Log("Download success!");
+            Debug.Log("<Console>Download " + url + " to StreamingAssets/SaveFiles/ success!");
             fileStream.Close();
+        }
+
+        /// <summary>
+        /// 上传指定路径文件到服务器指定路径下
+        /// </summary>
+        /// <param name="filePathInLocal">待上传的文件绝对路径</param>
+        /// <param name="filePathInServer">上传至服务器绝对路径</param>
+        /// <returns></returns>
+        public IEnumerator UploadFile(string filePathInLocal, string filePathInServer)
+        {
+            string url = filePathInServer;
+            string filepath = filePathInLocal;
+            
+            //建立和指定的FTP文件路径的连接
+            FtpWebRequest request = CreatFtpWebRequest(url, WebRequestMethods.Ftp.UploadFile);
+            Stream responseStream = request.GetRequestStream();
+
+            FileStream fs = File.OpenRead(filepath);
+            int buflength = 8196;
+            byte[] buffer = new byte[buflength];
+            int bytesRead = 1;
+
+            while (bytesRead != 0)
+            {
+                bytesRead = fs.Read(buffer, 0, buflength);
+                responseStream.Write(buffer, 0, bytesRead);
+                yield return new WaitForEndOfFrame();
+            }
+
+            responseStream.Close();
+            Debug.Log("<Console>Upload " + filepath + " to " + url + "success!");
+        }
+
+        /// <summary>
+        /// 上传StreamingAssets/Upload文件夹中的文件到当前服务器路径下
+        /// </summary>
+        /// <param name="newFileName">要上传的文件名</param>
+        /// <returns></returns>
+        public IEnumerator UploadFile(string newFileName)
+        {
+            string url = GetUrlString(newFileName);
+            string filepath = Application.dataPath + "/StreamingAssets/UploadFiles/" + newFileName;
+
+            FtpWebRequest request = CreatFtpWebRequest(url, WebRequestMethods.Ftp.UploadFile);
+            Stream responseStream = request.GetRequestStream();
+
+            FileStream fs = File.OpenRead(filepath);
+            //FileStream fileStream = File.Create(url+"/testFile.txt");
+            int buflength = 8196;
+            byte[] buffer = new byte[buflength];
+            int bytesRead = 1;
+
+            while (bytesRead != 0)
+            {
+                bytesRead = fs.Read(buffer, 0, buflength);
+                responseStream.Write(buffer, 0, bytesRead);
+                yield return new WaitForEndOfFrame();
+            }
+
+            responseStream.Close();
+            if (ShowFtpFileAndDirectory() == true)
+            {
+                Debug.Log("<Console>Upload " + filepath + " to " + url + "success!");
+            }
+            else
+            {
+                Debug.Log("<Error Message>Upload failed!");
+            }
         }
 
         /// <summary>
@@ -214,6 +351,7 @@ namespace UxlabFTPServer
         /// <returns>是否连接上FTP服务器</returns>
         private bool ShowFtpFileAndDirectory()
         {
+            string connectFilesRes = "";
             try
             {
                 DirsList.Clear();
@@ -227,7 +365,7 @@ namespace UxlabFTPServer
                 {
                     url = ftpUrlstring + currentDir;
                 }
-                Debug.Log(url);
+                connectFilesRes += ("<Connect>:" + url.ToString() + "\n");
                 FtpWebRequest request = CreatFtpWebRequest(url, WebRequestMethods.Ftp.ListDirectoryDetails);
                 FtpWebResponse response = GetFtpResponse(request);
                 if (response == null)
@@ -284,7 +422,7 @@ namespace UxlabFTPServer
                         dirname = namefiled[namefiledlength - 1];
                         dirname = dirname.PadRight(34, ' ');
                         name = dirname;
-                        Debug.Log("<Dir>:" + name);
+                        connectFilesRes += ("<Dir>:" + name+"\n");
                         DirsList.Add(name.Replace(" ", ""));
                     }
 
@@ -317,10 +455,11 @@ namespace UxlabFTPServer
                         filename = namefiled[namefiledlength - 1];
                         filename = filename.PadRight(34, ' ');
                         name = filename;
-                        Debug.Log("<File>:" + name);
+                        connectFilesRes += ("<File>:" + name + "\n");
                         FilesList.Add(name.Replace(" ", ""));
                     }
                 }
+                Debug.Log(connectFilesRes);
                 return true;
             }
             catch (Exception e)
